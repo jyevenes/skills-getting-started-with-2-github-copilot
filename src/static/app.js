@@ -15,17 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
-        const activityCard = document.createElement("div");
-        activityCard.className = "activity-card";
-
-        const spotsLeft = details.max_participants - details.participants.length;
-
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-        `;
+        const activityCard = createActivityCard(name, details);
 
         activitiesList.appendChild(activityCard);
 
@@ -39,6 +29,31 @@ document.addEventListener("DOMContentLoaded", () => {
       activitiesList.innerHTML = "<p>Failed to load activities. Please try again later.</p>";
       console.error("Error fetching activities:", error);
     }
+  }
+
+  // Function to create an activity card
+  function createActivityCard(activityName, details) {
+    const card = document.createElement('div');
+    card.className = 'activity-card';
+    
+    const participantsList = details.participants
+      .map(email => `<li>${email}</li>`)
+      .join('');
+
+    card.innerHTML = `
+      <h4>${activityName}</h4>
+      <p>${details.description}</p>
+      <p><strong>Schedule:</strong> ${details.schedule}</p>
+      <p><strong>Available Spots:</strong> ${details.max_participants - details.participants.length} / ${details.max_participants}</p>
+      <div class="participants-section">
+        <div class="participants-title">Current Participants:</div>
+        <ul class="participants-list">
+          ${participantsList}
+        </ul>
+      </div>
+    `;
+    
+    return card;
   }
 
   // Handle form submission
